@@ -8,8 +8,12 @@ model User {
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 
-  profile   Profile?
+  profile Profile?
+
   gearItems GearItem[] @relation("ProviderGear")
+
+  customerRentals RentalOrder[] @relation("CustomerRentals")
+  providerRentals RentalOrder[] @relation("ProviderRentals")
 
   @@index([role])
   @@index([activeStatus])
