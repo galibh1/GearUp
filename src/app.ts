@@ -7,18 +7,15 @@ import express, {
 } from "express";
 import { z } from "zod";
 
-import config from "./config/index.js";
-import AppError from "./errors/AppError.js";
-import globalErrorHandler from "./middlewares/globalErrorHandler.js";
-import notFound from "./middlewares/notFound.js";
-import validateRequest from "./middlewares/validateRequest.js";
+import config from "./config";
+import AppError from "./errors/AppError";
+import globalErrorHandler from "./middlewares/globalErrorHandler";
+import notFound from "./middlewares/notFound";
+import validateRequest from "./middlewares/validateRequest";
+import { authRoutes } from "./modules/auth/auth.route";
 
 const app = express();
 
-/**
- * Temporary schema for testing the validation middleware.
- * This route can be removed after the real modules are created.
- */
 const testValidationSchema = z.object({
   body: z.object({
     email: z
@@ -33,12 +30,11 @@ const testValidationSchema = z.object({
   }),
 
   params: z.object({}),
-
   query: z.object({}),
 });
 
 /**
- * Global middleware
+ * Global middlewares
  */
 app.use(
   cors({
@@ -48,46 +44,67 @@ app.use(
 );
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
+app.use(
+  express.urlencoded({
+    extended: true,
+  }),
+);
+
 app.use(cookieParser());
 
 /**
- * Root route
+ * Root endpoint
  */
-app.get("/", (_req: Request, res: Response) => {
-  res.status(200).json({
-    success: true,
-    message: "Welcome to GearUp API",
-    data: {
-      name: "GearUp",
-      description: "Rent sports and outdoor gear instantly",
-      version: "1.0.0",
-    },
-  });
-});
+app.get(
+  "/",
+  (_req: Request, res: Response): void => {
+    res.status(200).json({
+      success: true,
+      message: "Welcome to GearUp API",
+      data: {
+        name: "GearUp",
+        description:
+          "Rent sports and outdoor gear instantly",
+        version: "1.0.0",
+      },
+    });
+  },
+);
 
 /**
- * Health-check route
+ * Health-check endpoint
  */
-app.get("/api/health", (_req: Request, res: Response) => {
-  res.status(200).json({
-    success: true,
-    message: "GearUp API is healthy",
-    data: {
-      status: "healthy",
-      environment: config.NODE_ENV,
-      timestamp: new Date().toISOString(),
-    },
-  });
-});
+app.get(
+  "/api/health",
+  (_req: Request, res: Response): void => {
+    res.status(200).json({
+      success: true,
+      message: "GearUp API is healthy",
+      data: {
+        status: "healthy",
+        environment: config.NODE_ENV,
+        timestamp: new Date().toISOString(),
+      },
+    });
+  },
+);
 
 /**
- * Temporary route for testing request validation
+ * Authentication routes
+ *
+ * POST /api/auth/register
+ * POST /api/auth/login
+ */
+app.use("/api/auth", authRoutes);
+
+/**
+ * Temporary validation test route
  */
 app.post(
   "/api/test-validation",
   validateRequest(testValidationSchema),
-  (req: Request, res: Response) => {
+  (req: Request, res: Response): void => {
     res.status(200).json({
       success: true,
       message: "Request validation passed",
@@ -97,7 +114,7 @@ app.post(
 );
 
 /**
- * Temporary route for testing centralized error handling
+ * Temporary global error test route
  */
 app.get(
   "/api/test-error",
@@ -105,14 +122,15 @@ app.get(
     _req: Request,
     _res: Response,
     next: NextFunction,
-  ) => {
+  ): void => {
     next(
       new AppError(
         400,
         "This is a test error",
         {
           field: "test",
-          issue: "Error handling is working correctly",
+          issue:
+            "Error handling is working correctly",
         },
       ),
     );
@@ -120,13 +138,13 @@ app.get(
 );
 
 /**
- * Invalid API route handler
+ * 404 route handler
  */
 app.use(notFound);
 
 /**
  * Global error handler
- * This must always be the final middleware.
+ * This must remain the final middleware.
  */
 app.use(globalErrorHandler);
 
