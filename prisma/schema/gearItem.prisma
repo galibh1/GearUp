@@ -26,6 +26,7 @@ model GearItem {
   provider   User   @relation("ProviderGear", fields: [providerId], references: [id], onDelete: Cascade)
 
   rentalItems RentalItem[]
+  reviews     Review[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

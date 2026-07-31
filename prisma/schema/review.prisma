@@ -1,0 +1,29 @@
+model Review {
+  id String @id @default(uuid())
+
+  rating  Int
+  title   String? @db.VarChar(150)
+  comment String? @db.Text
+
+  customerId String
+  customer   User   @relation("CustomerReviews", fields: [customerId], references: [id], onDelete: Restrict)
+
+  gearItemId String
+  gearItem   GearItem @relation(fields: [gearItemId], references: [id], onDelete: Restrict)
+
+  rentalOrderId String
+  rentalOrder   RentalOrder @relation(fields: [rentalOrderId], references: [id], onDelete: Restrict)
+
+  isVisible Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([rentalOrderId, gearItemId])
+  @@index([customerId])
+  @@index([gearItemId])
+  @@index([rentalOrderId])
+  @@index([rating])
+  @@index([isVisible])
+  @@map("reviews")
+}

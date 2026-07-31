@@ -20,6 +20,7 @@ model RentalOrder {
 
   items    RentalItem[]
   payments Payment[]
+  reviews  Review[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

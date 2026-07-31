@@ -16,6 +16,7 @@ model User {
   providerRentals RentalOrder[] @relation("ProviderRentals")
 
   payments Payment[] @relation("CustomerPayments")
+  reviews  Review[]  @relation("CustomerReviews")
 
   @@index([role])
   @@index([activeStatus])
