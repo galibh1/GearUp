@@ -3,6 +3,7 @@ import type {
   Response,
 } from "express";
 
+import AppError from "../../errors/AppError";
 import catchAsync from "../../utils/catchAsync";
 import type {
   ILoginUser,
@@ -58,7 +59,33 @@ const loginUser = catchAsync(
   },
 );
 
+const getMyProfile = catchAsync(
+  async (
+    req: Request,
+    res: Response,
+  ): Promise<void> => {
+    if (!req.user) {
+      throw new AppError(
+        401,
+        "Authentication is required",
+      );
+    }
+
+    const result =
+      await authService.getMyProfileFromDB(
+        req.user.id,
+      );
+
+    res.status(200).json({
+      success: true,
+      message: "Current user retrieved successfully",
+      data: result,
+    });
+  },
+);
+
 export const authController = {
   registerUser,
   loginUser,
+  getMyProfile,
 };
