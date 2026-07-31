@@ -18,7 +18,8 @@ model RentalOrder {
 
   notes String? @db.Text
 
-  items RentalItem[]
+  items    RentalItem[]
+  payments Payment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
