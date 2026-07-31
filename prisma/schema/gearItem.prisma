@@ -1,0 +1,38 @@
+model GearItem {
+  id          String  @id @default(uuid())
+  name        String  @db.VarChar(255)
+  slug        String  @unique @db.VarChar(280)
+  description String  @db.Text
+  brand       String? @db.VarChar(100)
+
+  pricePerDay   Decimal @db.Decimal(10, 2)
+  depositAmount Decimal @default(0) @db.Decimal(10, 2)
+
+  stock          Int @default(1)
+  availableStock Int @default(1)
+
+  condition GearCondition @default(GOOD)
+  status    GearStatus    @default(AVAILABLE)
+
+  imageUrls      String[] @default([])
+  specifications Json?
+  location       String?  @db.VarChar(255)
+  isFeatured     Boolean  @default(false)
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  providerId String
+  provider   User   @relation("ProviderGear", fields: [providerId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([categoryId])
+  @@index([providerId])
+  @@index([status])
+  @@index([brand])
+  @@index([pricePerDay])
+  @@index([isFeatured])
+  @@map("gear_items")
+}

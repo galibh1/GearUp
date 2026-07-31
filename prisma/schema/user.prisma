@@ -8,7 +8,10 @@ model User {
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 
-  profile Profile?
+  profile   Profile?
+  gearItems GearItem[] @relation("ProviderGear")
 
+  @@index([role])
+  @@index([activeStatus])
   @@map("user")
 }

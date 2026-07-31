@@ -16,6 +16,13 @@ enum GearStatus {
   ARCHIVED
 }
 
+enum GearCondition {
+  NEW
+  LIKE_NEW
+  GOOD
+  FAIR
+}
+
 enum RentalStatus {
   PLACED
   CONFIRMED
