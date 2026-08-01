@@ -13,6 +13,11 @@ import globalErrorHandler from "./middlewares/globalErrorHandler";
 import notFound from "./middlewares/notFound";
 import validateRequest from "./middlewares/validateRequest";
 import { authRoutes } from "./modules/auth/auth.route";
+import { categoryRoutes } from "./modules/category/category.route";
+import {
+  providerGearRouter,
+  publicGearRouter,
+} from "./modules/gear/gear.route";
 
 const app = express();
 
@@ -91,12 +96,45 @@ app.get(
 );
 
 /**
- * Authentication routes
+ * Authentication endpoints
  *
  * POST /api/auth/register
  * POST /api/auth/login
+ * GET  /api/auth/me
  */
 app.use("/api/auth", authRoutes);
+
+/**
+ * Category endpoints
+ *
+ * GET    /api/categories
+ * GET    /api/categories/:id
+ * POST   /api/categories
+ * PATCH  /api/categories/:id
+ * DELETE /api/categories/:id
+ */
+app.use("/api/categories", categoryRoutes);
+
+/**
+ * Public gear endpoints
+ *
+ * GET /api/gear
+ * GET /api/gear/:id
+ */
+app.use("/api/gear", publicGearRouter);
+
+/**
+ * Provider gear-management endpoints
+ *
+ * GET    /api/provider/gear
+ * POST   /api/provider/gear
+ * PUT    /api/provider/gear/:id
+ * DELETE /api/provider/gear/:id
+ */
+app.use(
+  "/api/provider/gear",
+  providerGearRouter,
+);
 
 /**
  * Temporary validation test route
@@ -138,7 +176,7 @@ app.get(
 );
 
 /**
- * 404 route handler
+ * Invalid route handler
  */
 app.use(notFound);
 
