@@ -18,6 +18,10 @@ import {
   providerGearRouter,
   publicGearRouter,
 } from "./modules/gear/gear.route";
+import {
+  providerOrderRoutes,
+  rentalRoutes,
+} from "./modules/rental/rental.route";
 
 const app = express();
 
@@ -134,6 +138,27 @@ app.use("/api/gear", publicGearRouter);
 app.use(
   "/api/provider/gear",
   providerGearRouter,
+);
+
+/**
+ * Customer rental endpoints
+ *
+ * POST  /api/rentals
+ * GET   /api/rentals
+ * GET   /api/rentals/:id
+ * PATCH /api/rentals/:id/cancel
+ */
+app.use("/api/rentals", rentalRoutes);
+
+/**
+ * Provider rental-order endpoints
+ *
+ * GET   /api/provider/orders
+ * PATCH /api/provider/orders/:id
+ */
+app.use(
+  "/api/provider/orders",
+  providerOrderRoutes,
 );
 
 /**
