@@ -19,9 +19,14 @@ import {
   publicGearRouter,
 } from "./modules/gear/gear.route";
 import {
+  paymentRoutes,
+  paymentWebhookRouter,
+} from "./modules/payment/payment.route";
+import {
   providerOrderRoutes,
   rentalRoutes,
 } from "./modules/rental/rental.route";
+import { reviewRoutes } from "./modules/review/review.route";
 
 const app = express();
 
@@ -30,12 +35,18 @@ const testValidationSchema = z.object({
     email: z
       .string()
       .trim()
-      .email("A valid email address is required"),
+      .email(
+        "A valid email address is required",
+      ),
 
     quantity: z
       .number()
-      .int("Quantity must be an integer")
-      .positive("Quantity must be greater than zero"),
+      .int(
+        "Quantity must be an integer",
+      )
+      .positive(
+        "Quantity must be greater than zero",
+      ),
   }),
 
   params: z.object({}),
@@ -43,7 +54,7 @@ const testValidationSchema = z.object({
 });
 
 /**
- * Global middlewares
+ * CORS middleware
  */
 app.use(
   cors({
@@ -52,6 +63,25 @@ app.use(
   }),
 );
 
+/**
+ * Stripe webhook
+ *
+ * This must be mounted before express.json().
+ * Stripe requires the original raw request body
+ * to verify the webhook signature.
+ *
+ * POST /api/payments/webhook
+ */
+app.use(
+  "/api/payments/webhook",
+  paymentWebhookRouter,
+);
+
+/**
+ * Global body parsers
+ *
+ * These must come after the Stripe webhook route.
+ */
 app.use(express.json());
 
 app.use(
@@ -67,14 +97,21 @@ app.use(cookieParser());
  */
 app.get(
   "/",
-  (_req: Request, res: Response): void => {
+  (
+    _req: Request,
+    res: Response,
+  ): void => {
     res.status(200).json({
       success: true,
-      message: "Welcome to GearUp API",
+      message:
+        "Welcome to GearUp API",
+
       data: {
         name: "GearUp",
+
         description:
           "Rent sports and outdoor gear instantly",
+
         version: "1.0.0",
       },
     });
@@ -86,14 +123,22 @@ app.get(
  */
 app.get(
   "/api/health",
-  (_req: Request, res: Response): void => {
+  (
+    _req: Request,
+    res: Response,
+  ): void => {
     res.status(200).json({
       success: true,
-      message: "GearUp API is healthy",
+      message:
+        "GearUp API is healthy",
+
       data: {
         status: "healthy",
-        environment: config.NODE_ENV,
-        timestamp: new Date().toISOString(),
+        environment:
+          config.NODE_ENV,
+
+        timestamp:
+          new Date().toISOString(),
       },
     });
   },
@@ -106,7 +151,10 @@ app.get(
  * POST /api/auth/login
  * GET  /api/auth/me
  */
-app.use("/api/auth", authRoutes);
+app.use(
+  "/api/auth",
+  authRoutes,
+);
 
 /**
  * Category endpoints
@@ -117,7 +165,10 @@ app.use("/api/auth", authRoutes);
  * PATCH  /api/categories/:id
  * DELETE /api/categories/:id
  */
-app.use("/api/categories", categoryRoutes);
+app.use(
+  "/api/categories",
+  categoryRoutes,
+);
 
 /**
  * Public gear endpoints
@@ -125,7 +176,10 @@ app.use("/api/categories", categoryRoutes);
  * GET /api/gear
  * GET /api/gear/:id
  */
-app.use("/api/gear", publicGearRouter);
+app.use(
+  "/api/gear",
+  publicGearRouter,
+);
 
 /**
  * Provider gear-management endpoints
@@ -148,7 +202,10 @@ app.use(
  * GET   /api/rentals/:id
  * PATCH /api/rentals/:id/cancel
  */
-app.use("/api/rentals", rentalRoutes);
+app.use(
+  "/api/rentals",
+  rentalRoutes,
+);
 
 /**
  * Provider rental-order endpoints
@@ -162,22 +219,55 @@ app.use(
 );
 
 /**
+ * Customer payment endpoints
+ *
+ * POST /api/payments/create
+ * POST /api/payments/confirm
+ * GET  /api/payments
+ * GET  /api/payments/:id
+ */
+app.use(
+  "/api/payments",
+  paymentRoutes,
+);
+
+/**
+ * Review endpoints
+ *
+ * POST   /api/reviews
+ * GET    /api/reviews/gear/:gearItemId
+ * GET    /api/reviews/:id
+ * PATCH  /api/reviews/:id
+ * DELETE /api/reviews/:id
+ */
+app.use(
+  "/api/reviews",
+  reviewRoutes,
+);
+
+/**
  * Temporary validation test route
  */
 app.post(
   "/api/test-validation",
-  validateRequest(testValidationSchema),
-  (req: Request, res: Response): void => {
+  validateRequest(
+    testValidationSchema,
+  ),
+  (
+    req: Request,
+    res: Response,
+  ): void => {
     res.status(200).json({
       success: true,
-      message: "Request validation passed",
+      message:
+        "Request validation passed",
       data: req.validatedData,
     });
   },
 );
 
 /**
- * Temporary global error test route
+ * Temporary global-error test route
  */
 app.get(
   "/api/test-error",
@@ -192,6 +282,7 @@ app.get(
         "This is a test error",
         {
           field: "test",
+
           issue:
             "Error handling is working correctly",
         },
@@ -207,6 +298,7 @@ app.use(notFound);
 
 /**
  * Global error handler
+ *
  * This must remain the final middleware.
  */
 app.use(globalErrorHandler);
