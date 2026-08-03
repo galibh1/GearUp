@@ -14,6 +14,8 @@ import notFound from "./middlewares/notFound";
 import validateRequest from "./middlewares/validateRequest";
 import { authRoutes } from "./modules/auth/auth.route";
 import { categoryRoutes } from "./modules/category/category.route";
+import { adminRoutes } from "./modules/admin/admin.route";
+
 import {
   providerGearRouter,
   publicGearRouter,
@@ -63,25 +65,13 @@ app.use(
   }),
 );
 
-/**
- * Stripe webhook
- *
- * This must be mounted before express.json().
- * Stripe requires the original raw request body
- * to verify the webhook signature.
- *
- * POST /api/payments/webhook
- */
+
 app.use(
   "/api/payments/webhook",
   paymentWebhookRouter,
 );
 
-/**
- * Global body parsers
- *
- * These must come after the Stripe webhook route.
- */
+
 app.use(express.json());
 
 app.use(
@@ -92,9 +82,7 @@ app.use(
 
 app.use(cookieParser());
 
-/**
- * Root endpoint
- */
+
 app.get(
   "/",
   (
@@ -118,9 +106,7 @@ app.get(
   },
 );
 
-/**
- * Health-check endpoint
- */
+
 app.get(
   "/api/health",
   (
@@ -144,16 +130,22 @@ app.get(
   },
 );
 
-/**
- * Authentication endpoints
- *
- * POST /api/auth/register
- * POST /api/auth/login
- * GET  /api/auth/me
- */
+
 app.use(
   "/api/auth",
   authRoutes,
+);
+
+/**
+ * Admin endpoints
+ *
+ * GET   /api/admin/users
+ * GET   /api/admin/users/:id
+ * PATCH /api/admin/users/:id
+ */
+app.use(
+  "/api/admin",
+  adminRoutes,
 );
 
 /**
