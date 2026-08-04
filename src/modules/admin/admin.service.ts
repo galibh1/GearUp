@@ -5,10 +5,13 @@ import type {
 import AppError from "../../errors/AppError";
 import { prisma } from "../../lib/prisma";
 import type {
+  IAdminGearQuery,
   IAdminPaginationMeta,
+  IAdminRentalQuery,
   IAdminUserQuery,
   IUpdateUserStatusPayload,
 } from "./admin.interface";
+
 
 const adminUserSelect = {
   id: true,
@@ -38,8 +41,12 @@ const adminUserSelect = {
   },
 } satisfies Prisma.UserSelect;
 
+
 const createPaginationMeta = (
-  query: IAdminUserQuery,
+  query:
+    | IAdminUserQuery
+    | IAdminGearQuery
+    | IAdminRentalQuery,
   total: number,
 ): IAdminPaginationMeta => {
   return {
@@ -56,15 +63,11 @@ const createPaginationMeta = (
   };
 };
 
+
 const getAllUsersFromDB = async (
   query: IAdminUserQuery,
 ) => {
   const where: Prisma.UserWhereInput = {
-    /*
-     * Admin accounts are excluded because this
-     * endpoint is intended for managing customers
-     * and providers.
-     */
     role:
       query.role === "ALL"
         ? {
@@ -102,15 +105,18 @@ const getAllUsersFromDB = async (
     }),
   };
 
+
   const skip =
     (query.page - 1) *
     query.limit;
+
 
   const orderBy:
     Prisma.UserOrderByWithRelationInput = {
     [query.sortBy]:
       query.sortOrder,
   };
+
 
   const [
     users,
@@ -129,6 +135,7 @@ const getAllUsersFromDB = async (
     }),
   ]);
 
+
   return {
     meta:
       createPaginationMeta(
@@ -139,6 +146,7 @@ const getAllUsersFromDB = async (
     data: users,
   };
 };
+
 
 const getUserByIdFromDB = async (
   userId: string,
@@ -152,12 +160,14 @@ const getUserByIdFromDB = async (
       select: adminUserSelect,
     });
 
+
   if (!user) {
     throw new AppError(
       404,
       "User not found",
     );
   }
+
 
   if (user.role === "ADMIN") {
     throw new AppError(
@@ -166,8 +176,10 @@ const getUserByIdFromDB = async (
     );
   }
 
+
   return user;
 };
+
 
 const updateUserStatusIntoDB =
   async (
@@ -175,12 +187,14 @@ const updateUserStatusIntoDB =
     userId: string,
     payload: IUpdateUserStatusPayload,
   ) => {
+
     if (adminId === userId) {
       throw new AppError(
         403,
         "You cannot change the status of your own admin account",
       );
     }
+
 
     const user =
       await prisma.user.findUnique({
@@ -197,12 +211,14 @@ const updateUserStatusIntoDB =
         },
       });
 
+
     if (!user) {
       throw new AppError(
         404,
         "User not found",
       );
     }
+
 
     if (user.role === "ADMIN") {
       throw new AppError(
@@ -211,41 +227,224 @@ const updateUserStatusIntoDB =
       );
     }
 
-    if (
-      user.activeStatus ===
-      payload.activeStatus
-    ) {
-      throw new AppError(
-        409,
-        `User account is already ${payload.activeStatus.toLowerCase()}`,
-        {
-          currentStatus:
-            user.activeStatus,
-          requestedStatus:
-            payload.activeStatus,
-        },
-      );
-    }
 
-    const updatedUser =
-      await prisma.user.update({
-        where: {
-          id: userId,
-        },
+    return prisma.user.update({
+      where: {
+        id: userId,
+      },
 
-        data: {
-          activeStatus:
-            payload.activeStatus,
-        },
+      data: {
+        activeStatus:
+          payload.activeStatus,
+      },
 
-        select: adminUserSelect,
-      });
-
-    return updatedUser;
+      select: adminUserSelect,
+    });
   };
+
+
+const getAllGearFromDB = async (
+  query: IAdminGearQuery,
+) => {
+
+  const where:
+    Prisma.GearItemWhereInput = {
+
+    ...(query.searchTerm && {
+      OR: [
+        {
+          name: {
+            contains:
+              query.searchTerm,
+            mode: "insensitive",
+          },
+        },
+
+        {
+          brand: {
+            contains:
+              query.searchTerm,
+            mode: "insensitive",
+          },
+        },
+      ],
+    }),
+
+    ...(query.categoryId && {
+      categoryId:
+        query.categoryId,
+    }),
+
+    ...(query.providerId && {
+      providerId:
+        query.providerId,
+    }),
+  };
+
+
+  const skip =
+    (query.page - 1) *
+    query.limit;
+
+
+  const [
+    gear,
+    total,
+  ] = await prisma.$transaction([
+    prisma.gearItem.findMany({
+      where,
+      skip,
+      take: query.limit,
+
+      orderBy: {
+        createdAt:
+          query.sortOrder,
+      },
+
+      include: {
+        provider: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+      },
+    }),
+
+    prisma.gearItem.count({
+      where,
+    }),
+  ]);
+
+
+  return {
+    meta:
+      createPaginationMeta(
+        query,
+        total,
+      ),
+
+    data: gear,
+  };
+};
+
+
+const getAllRentalsFromDB = async (
+  query: IAdminRentalQuery,
+) => {
+
+  const where:
+    Prisma.RentalOrderWhereInput = {
+
+    ...(query.status && {
+      status:
+        query.status,
+    }),
+
+    ...(query.customerId && {
+      customerId:
+        query.customerId,
+    }),
+
+    ...(query.providerId && {
+      providerId:
+        query.providerId,
+    }),
+  };
+
+
+  const skip =
+    (query.page - 1) *
+    query.limit;
+
+
+  const [
+    rentals,
+    total,
+  ] = await prisma.$transaction([
+
+    prisma.rentalOrder.findMany({
+      where,
+
+      skip,
+
+      take: query.limit,
+
+      orderBy: {
+        createdAt:
+          query.sortOrder,
+      },
+
+      include: {
+
+        customer: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+
+
+        provider: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+
+
+        items: {
+          include: {
+            gearItem: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+              },
+            },
+          },
+        },
+
+
+        payments: true,
+      },
+    }),
+
+
+    prisma.rentalOrder.count({
+      where,
+    }),
+
+  ]);
+
+
+  return {
+    meta:
+      createPaginationMeta(
+        query,
+        total,
+      ),
+
+    data: rentals,
+  };
+};
+
 
 export const adminService = {
   getAllUsersFromDB,
   getUserByIdFromDB,
   updateUserStatusIntoDB,
+  getAllGearFromDB,
+  getAllRentalsFromDB,
 };

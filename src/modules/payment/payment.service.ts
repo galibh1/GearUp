@@ -586,12 +586,9 @@ const createPaymentSessionIntoStripe =
 
                   product_data: {
                     name:
-                      "GearUp Rental Payment",
+                      "Rental Payment",
 
-                    description:
-                      `Rental ${rentalOrder.id} from ` +
-                      `${rentalOrder.startDate.toISOString()} ` +
-                      `to ${rentalOrder.endDate.toISOString()}`,
+                   
                   },
                 },
               },

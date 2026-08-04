@@ -55,9 +55,7 @@ const testValidationSchema = z.object({
   query: z.object({}),
 });
 
-/**
- * CORS middleware
- */
+
 app.use(
   cors({
     origin: config.app_url,

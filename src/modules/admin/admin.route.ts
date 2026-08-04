@@ -7,6 +7,7 @@ import { adminValidation } from "./admin.validation";
 
 const adminRoutes = Router();
 
+
 /**
  * Get all customers and providers.
  *
@@ -20,6 +21,7 @@ adminRoutes.get(
   ),
   adminController.getAllUsers,
 );
+
 
 /**
  * Get one customer or provider by ID.
@@ -35,6 +37,7 @@ adminRoutes.get(
   adminController.getUserById,
 );
 
+
 /**
  * Suspend, activate, or deactivate a user.
  *
@@ -48,5 +51,36 @@ adminRoutes.patch(
   ),
   adminController.updateUserStatus,
 );
+
+
+/**
+ * Get all gear items.
+ *
+ * GET /api/admin/gear
+ */
+adminRoutes.get(
+  "/gear",
+  auth("ADMIN"),
+  validateRequest(
+    adminValidation.adminGearQueryValidationSchema,
+  ),
+  adminController.getAllGear,
+);
+
+
+/**
+ * Get all rental orders.
+ *
+ * GET /api/admin/rentals
+ */
+adminRoutes.get(
+  "/rentals",
+  auth("ADMIN"),
+  validateRequest(
+    adminValidation.adminRentalQueryValidationSchema,
+  ),
+  adminController.getAllRentals,
+);
+
 
 export { adminRoutes };

@@ -6,10 +6,13 @@ import type {
 import AppError from "../../errors/AppError";
 import catchAsync from "../../utils/catchAsync";
 import type {
+  IAdminGearQuery,
+  IAdminRentalQuery,
   IAdminUserQuery,
   IUpdateUserStatusPayload,
 } from "./admin.interface";
 import { adminService } from "./admin.service";
+
 
 type ValidatedRequestData<
   TBody = Record<string, never>,
@@ -21,10 +24,15 @@ type ValidatedRequestData<
   query: TQuery;
 };
 
+
 type AdminUserIdParams = {
   id: string;
 };
 
+
+/**
+ * GET /api/admin/users
+ */
 const getAllUsers = catchAsync(
   async (
     req: Request,
@@ -37,10 +45,12 @@ const getAllUsers = catchAsync(
         IAdminUserQuery
       >;
 
+
     const result =
       await adminService.getAllUsersFromDB(
         validatedData.query,
       );
+
 
     res.status(200).json({
       success: true,
@@ -52,6 +62,10 @@ const getAllUsers = catchAsync(
   },
 );
 
+
+/**
+ * GET /api/admin/users/:id
+ */
 const getUserById = catchAsync(
   async (
     req: Request,
@@ -63,10 +77,12 @@ const getUserById = catchAsync(
         AdminUserIdParams
       >;
 
+
     const result =
       await adminService.getUserByIdFromDB(
         validatedData.params.id,
       );
+
 
     res.status(200).json({
       success: true,
@@ -77,6 +93,10 @@ const getUserById = catchAsync(
   },
 );
 
+
+/**
+ * PATCH /api/admin/users/:id
+ */
 const updateUserStatus = catchAsync(
   async (
     req: Request,
@@ -89,11 +109,13 @@ const updateUserStatus = catchAsync(
       );
     }
 
+
     const validatedData =
       req.validatedData as ValidatedRequestData<
         IUpdateUserStatusPayload,
         AdminUserIdParams
       >;
+
 
     const result =
       await adminService.updateUserStatusIntoDB(
@@ -101,6 +123,7 @@ const updateUserStatus = catchAsync(
         validatedData.params.id,
         validatedData.body,
       );
+
 
     res.status(200).json({
       success: true,
@@ -111,8 +134,77 @@ const updateUserStatus = catchAsync(
   },
 );
 
+
+/**
+ * GET /api/admin/gear
+ */
+const getAllGear = catchAsync(
+  async (
+    req: Request,
+    res: Response,
+  ): Promise<void> => {
+    const validatedData =
+      req.validatedData as ValidatedRequestData<
+        Record<string, never>,
+        Record<string, never>,
+        IAdminGearQuery
+      >;
+
+
+    const result =
+      await adminService.getAllGearFromDB(
+        validatedData.query,
+      );
+
+
+    res.status(200).json({
+      success: true,
+      message:
+        "Gear items retrieved successfully",
+      meta: result.meta,
+      data: result.data,
+    });
+  },
+);
+
+
+/**
+ * GET /api/admin/rentals
+ */
+const getAllRentals = catchAsync(
+  async (
+    req: Request,
+    res: Response,
+  ): Promise<void> => {
+    const validatedData =
+      req.validatedData as ValidatedRequestData<
+        Record<string, never>,
+        Record<string, never>,
+        IAdminRentalQuery
+      >;
+
+
+    const result =
+      await adminService.getAllRentalsFromDB(
+        validatedData.query,
+      );
+
+
+    res.status(200).json({
+      success: true,
+      message:
+        "Rental orders retrieved successfully",
+      meta: result.meta,
+      data: result.data,
+    });
+  },
+);
+
+
 export const adminController = {
   getAllUsers,
   getUserById,
   updateUserStatus,
+  getAllGear,
+  getAllRentals,
 };
