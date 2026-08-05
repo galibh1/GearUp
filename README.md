@@ -1,143 +1,129 @@
-# GearUp Backend 
+# GearUp Backend
 
 GearUp is a sports and outdoor equipment rental backend system that allows customers to rent gear, providers to manage inventory and rental requests, and administrators to manage the platform.
 
-The project provides a complete rental workflow including authentication, role-based authorization, gear management, rental processing, Stripe payment integration, and review management.
+The project provides a complete rental workflow, including authentication, role-based authorization, gear management, rental processing, Stripe payment integration, and review management.
 
 ---
 
-# 📌 Project Features
+## 📌 Project Features
 
-✅ JWT Authentication  
-✅ Role Based Authorization  
-✅ Customer / Provider / Admin system  
-✅ Gear inventory management  
-✅ Category management  
-✅ Rental order management  
-✅ Stock availability checking  
-✅ Stripe Checkout payment integration  
-✅ Stripe Webhook payment confirmation  
-✅ Review and rating system  
-✅ Request validation using Zod  
-✅ Global error handling  
-✅ Prisma ORM with PostgreSQL  
-
----
-
-```
+- ✅ JWT authentication
+- ✅ Role-based authorization
+- ✅ Customer, Provider, and Admin roles
+- ✅ Gear inventory management
+- ✅ Category management
+- ✅ Rental order management
+- ✅ Stock availability checking
+- ✅ Stripe Checkout payment integration
+- ✅ Stripe webhook payment confirmation
+- ✅ Review and rating system
+- ✅ Request validation using Zod
+- ✅ Global error handling
+- ✅ Prisma ORM with PostgreSQL
 
 ---
 
-# 🛠️ Technology Stack
+## 🛠️ Technology Stack
 
-## Backend
+### Backend
 
 - Node.js
 - Express.js
 - TypeScript
 
-## Database
+### Database
 
 - PostgreSQL
 - Prisma ORM
 
-## Security
+### Security
 
-- JWT Authentication
+- JWT authentication
 - bcrypt password hashing
 - Role-based access control
 
-## Validation
+### Validation
 
 - Zod
 
-## Payment
+### Payment
 
 - Stripe Checkout
 - Stripe Webhooks
 
-## Tools
+### Tools
 
 - Postman
 - Prisma Studio
+- Stripe CLI
+- Vercel CLI
 - tsup
 
 ---
 
-# 👥 User Roles
+## 👥 User Roles
 
-## Customer
+### Customer
 
 Customers can:
 
-- Register and login
+- Register and log in
 - Browse available gear
 - Create rental orders
 - View rental history
-- Cancel rentals
+- Cancel eligible rentals
 - Make payments
-- Submit reviews
+- Submit reviews and ratings
 
-
----
-
-## Provider
+### Provider
 
 Providers can:
 
 - Create gear items
 - Update gear information
-- Delete gear
-- Manage stock
+- Delete gear items
+- Manage inventory and stock
 - View rental requests
 - Confirm rental orders
-- Update rental status
+- Update rental statuses
 
+### Admin
 
----
-
-## Admin
-
-Admins can:
+Administrators can:
 
 - Manage users
 - View all users
 - Manage categories
+- View platform information
 - Monitor system activities
 
 ---
 
-# 📂 Project Structure
+## 📂 Project Structure
 
-```
-GearUp
-
+```text
+GearUp/
 │
-├── src
-│   │
+├── src/
 │   ├── app.ts
 │   ├── server.ts
 │   │
-│   ├── config
+│   ├── config/
+│   ├── errors/
+│   ├── middlewares/
 │   │
-│   ├── errors
-│   │
-│   ├── middlewares
-│   │
-│   └── modules
-│       │
-│       ├── auth
-│       ├── admin
-│       ├── category
-│       ├── gear
-│       ├── rental
-│       ├── payment
-│       └── review
+│   └── modules/
+│       ├── auth/
+│       ├── admin/
+│       ├── category/
+│       ├── gear/
+│       ├── rental/
+│       ├── payment/
+│       └── review/
 │
-├── prisma
-│
-├── generated
-│
+├── prisma/
+├── generated/
 ├── package.json
 ├── tsconfig.json
 ├── tsup.config.ts
@@ -146,21 +132,21 @@ GearUp
 
 ---
 
-# ⚙️ Installation
+## ⚙️ Installation
 
-Clone repository:
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/galibh1/GearUp.git
 ```
 
-Move into project:
+### 2. Move into the project directory
 
 ```bash
 cd GearUp
 ```
 
-Install dependencies:
+### 3. Install dependencies
 
 ```bash
 npm install
@@ -168,67 +154,69 @@ npm install
 
 ---
 
-# 🔐 Environment Configuration
+## 🔐 Environment Configuration
 
-Create a `.env` file:
+Create a `.env` file in the root directory:
 
 ```env
 NODE_ENV=development
-
 PORT=8000
 
+APP_URL=http://localhost:3000
 
 DATABASE_URL="your_database_url"
 
-
 BCRYPT_SALT_ROUNDS=12
 
-
 JWT_ACCESS_SECRET="your_access_secret"
-
 JWT_ACCESS_EXPIRATION="7d"
 
-
 JWT_REFRESH_SECRET="your_refresh_secret"
-
 JWT_REFRESH_EXPIRATION="30d"
 
-
 STRIPE_SECRET_KEY="your_stripe_secret_key"
-
 STRIPE_WEBHOOK_SECRET="your_webhook_secret"
-
 STRIPE_CURRENCY="usd"
 
+PAYMENT_SUCCESS_URL="http://localhost:3000/payment/success"
+PAYMENT_CANCEL_URL="http://localhost:3000/payment/cancel"
 
-PAYMENT_SUCCESS_URL="http://localhost:8000/payment/success"
-
-PAYMENT_CANCEL_URL="http://localhost:8000/payment/cancel"
+ADMIN_NAME="GearUp Admin"
+ADMIN_EMAIL="admin@gearup.com"
+ADMIN_PASSWORD="your_secure_admin_password"
 ```
+
+> Never commit your `.env` file or expose private credentials publicly.
 
 ---
 
-# 🗄️ Database Setup
+## 🗄️ Database Setup
 
-Generate Prisma Client:
+### Generate Prisma Client
 
 ```bash
 npm run prisma:generate
 ```
 
-Run migration:
+### Run Development Migration
 
 ```bash
 npm run prisma:migrate
 ```
 
-Deploy migration:
+### Apply Production Migrations
 
 ```bash
 npm run prisma:deploy
 ```
 
-Open Prisma Studio:
+### Seed the Database
+
+```bash
+npm run prisma:seed
+```
+
+### Open Prisma Studio
 
 ```bash
 npm run prisma:studio
@@ -236,31 +224,27 @@ npm run prisma:studio
 
 ---
 
-# ▶️ Running Application
+## ▶️ Running the Application
 
-## Development Mode
+### Development Mode
 
 ```bash
 npm run dev
 ```
 
-Server:
+The server will run at:
 
-```
+```text
 http://localhost:8000
 ```
 
----
-
-## Production Build
-
-Build:
+### Production Build
 
 ```bash
 npm run build
 ```
 
-Start:
+### Start the Production Server
 
 ```bash
 npm start
@@ -268,28 +252,29 @@ npm start
 
 ---
 
-# 🔑 Authentication Flow
+## 🔑 Authentication Flow
 
-1. User registers
-2. User logs in
-3. Server returns JWT access token
-4. Token is sent with protected requests
+1. The user registers an account.
+2. The user logs in with valid credentials.
+3. The server returns a JWT access token.
+4. The token is sent with protected API requests.
+5. The server verifies the token and user role.
 
-Example:
+Example authorization header:
 
-```
-Authorization:
-
-Bearer ACCESS_TOKEN
+```http
+Authorization: Bearer ACCESS_TOKEN
 ```
 
 ---
 
-# 📌 API Endpoints
+## 📌 API Endpoints
 
-## Authentication
+### Authentication
 
-```
+Base route:
+
+```text
 /api/auth
 ```
 
@@ -299,224 +284,289 @@ Features:
 - Login
 - Logout
 
-
 ---
 
-# Categories
+### Categories
 
-```
+Base route:
+
+```text
 /api/categories
 ```
 
 Features:
 
-- Create category
-- Update category
-- Delete category
+- Create a category
+- Update a category
+- Delete a category
 - View categories
-
 
 ---
 
-# Gear
+### Gear
 
-Public:
+#### Public Routes
 
-```
+```http
 GET /api/gear
 GET /api/gear/:id
 ```
 
+#### Provider Routes
 
-Provider:
-
-```
+```http
 GET    /api/provider/gear
 POST   /api/provider/gear
 PUT    /api/provider/gear/:id
 DELETE /api/provider/gear/:id
 ```
 
-
 Features:
 
-- Gear creation
-- Gear update
-- Gear deletion
-- Inventory management
-
+- Create gear
+- Update gear
+- Delete gear
+- View gear listings
+- Manage inventory
 
 ---
 
-# Rentals
+### Rentals
 
-Customer:
+#### Customer Routes
 
-```
+```http
 POST  /api/rentals
 GET   /api/rentals
 GET   /api/rentals/:id
 PATCH /api/rentals/:id/cancel
 ```
 
+#### Provider Routes
 
-Provider:
-
-```
+```http
 GET   /api/provider/orders
-
 PATCH /api/provider/orders/:id
 ```
 
-
 Features:
 
-- Create rental
-- Confirm rental
-- Cancel rental
+- Create a rental
+- Confirm a rental
+- Cancel a rental
+- View rental details
 - Update rental status
-
 
 ---
 
-# Payments
+### Payments
 
-```
+Base route:
+
+```text
 /api/payments
 ```
 
 Features:
 
-- Create Stripe checkout session
+- Create a Stripe Checkout session
 - Verify payment
+- Process Stripe webhook events
 - Store payment records
-
+- Update payment status
 
 ---
 
-# Reviews
+### Reviews
 
-```
+Base route:
+
+```text
 /api/reviews
 ```
 
 Features:
 
-- Create review
-- Update review
-- Delete review
+- Create a review
+- Update a review
+- Delete a review
 - View reviews
-
+- Submit ratings
 
 ---
 
-# 💳 Stripe Payment Workflow
+## 💳 Stripe Payment Workflow
 
-```
-Customer creates rental
-
-        ↓
-
-Provider confirms rental
-
-        ↓
-
-Customer creates checkout session
-
-        ↓
-
-Stripe Checkout Payment
-
-        ↓
-
-Stripe Webhook Triggered
-
-        ↓
-
-Payment status updated
-
-        ↓
-
-Rental status becomes PAID
+```text
+Customer creates a rental
+              ↓
+Provider confirms the rental
+              ↓
+Customer creates a Checkout session
+              ↓
+Customer completes the Stripe payment
+              ↓
+Stripe sends a webhook event
+              ↓
+Backend verifies the webhook
+              ↓
+Payment status is updated
+              ↓
+Rental payment status becomes PAID
 ```
 
 ---
+
+## 🔔 Local Stripe Webhook Testing
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Open another terminal and run:
+
+```bash
+stripe listen --forward-to localhost:8000/api/payments/webhook
+```
+
+Copy the webhook signing secret returned by Stripe CLI and add it to your `.env` file:
+
+```env
+STRIPE_WEBHOOK_SECRET="whsec_your_local_webhook_secret"
+```
+
+Restart the development server after updating the environment variable.
+
 ---
 
-# 🧪 Testing
+## 🧪 Testing
 
 The API was tested using:
 
 - Postman
 - Stripe Test Checkout
+- Stripe CLI
 - Prisma Studio
-
 
 Testing included:
 
 - Authentication
 - Authorization
+- Role-based access control
 - CRUD operations
-- Validation errors
+- Request validation
 - Rental workflow
+- Stock availability
+- Stripe Checkout
+- Stripe webhook processing
 - Payment completion
-
+- Review management
+- Error handling
 
 ---
 
-# 🚨 Error Handling
+## 🚨 Error Handling
 
-The project includes:
+The project includes centralized handling for:
 
 - Authentication errors
 - Authorization errors
 - Validation errors
-- Resource not found errors
+- Resource-not-found errors
+- Database errors
+- Payment errors
 - Business logic errors
+- Unexpected server errors
 
-
-Example response:
+Example error response:
 
 ```json
 {
-    "success": false,
-    "message": "Validation failed"
+  "success": false,
+  "message": "Validation failed"
 }
 ```
 
 ---
 
-# 🚀 Deployment
+## 🚀 Deployment
 
 The project can be deployed using:
 
 - Vercel
 - Render
 - Railway
-- Docker
-
+- Docker-compatible hosting platforms
 
 Production deployment requires:
 
+- A hosted PostgreSQL database
 - Database URL
 - JWT secrets
 - Stripe credentials
 - Environment variables
+- Applied Prisma migrations
 
+### Deploy to Vercel
+
+Make sure your `package.json` includes:
+
+```json
+{
+  "scripts": {
+    "postinstall": "prisma generate"
+  }
+}
+```
+
+Log in to Vercel:
+
+```bash
+vercel login
+```
+
+Link the project:
+
+```bash
+vercel link
+```
+
+Deploy to production:
+
+```bash
+vercel --prod
+```
+
+After deployment, test:
+
+```text
+https://your-project.vercel.app/
+```
+
+Health-check endpoint:
+
+```text
+https://your-project.vercel.app/api/health
+```
 
 ---
 
-# 👨‍💻 Author
+## 👨‍💻 Author
 
-Galib Hasan
+**Galib Hasan**
 
 GitHub:
 
-https://github.com/galibh1/GearUp
+https://github.com/galibh1
 
+Project Repository:
+
+https://github.com/galibh1/GearUp
 
 ---
 
-# 📄 License
+## 📄 License
 
-ISC License
+This project is licensed under the ISC License.
