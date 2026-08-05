@@ -9,3 +9,5 @@ generated/
 .DS_Store
 coverage/
 *.log
+.vercel
+.env*
