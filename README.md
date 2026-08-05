@@ -542,14 +542,9 @@ vercel --prod
 After deployment, test:
 
 ```text
-https://your-project.vercel.app/
+https://gearup-backend-woad.vercel.app/
 ```
 
-Health-check endpoint:
-
-```text
-https://your-project.vercel.app/api/health
-```
 
 ---
 
