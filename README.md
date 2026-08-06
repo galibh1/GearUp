@@ -28,7 +28,7 @@ The project provides a complete rental workflow, including authentication, role-
 
 ### Backend
 
-- Node.js
+
 - Express.js
 - TypeScript
 
@@ -544,7 +544,6 @@ After deployment, test:
 ```text
 https://gearup-backend-woad.vercel.app/
 ```
-
 
 ---
 
