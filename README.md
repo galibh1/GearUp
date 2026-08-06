@@ -28,7 +28,6 @@ The project provides a complete rental workflow, including authentication, role-
 
 ### Backend
 
-
 - Express.js
 - TypeScript
 
@@ -162,7 +161,7 @@ Create a `.env` file in the root directory:
 NODE_ENV=development
 PORT=8000
 
-APP_URL=http://localhost:3000
+APP_URL=gearup-backend-woad.vercel.app
 
 DATABASE_URL="your_database_url"
 
@@ -178,8 +177,8 @@ STRIPE_SECRET_KEY="your_stripe_secret_key"
 STRIPE_WEBHOOK_SECRET="your_webhook_secret"
 STRIPE_CURRENCY="usd"
 
-PAYMENT_SUCCESS_URL="http://localhost:3000/payment/success"
-PAYMENT_CANCEL_URL="http://localhost:3000/payment/cancel"
+PAYMENT_SUCCESS_URL="http://localhost:8000/payment/success"
+PAYMENT_CANCEL_URL="http://localhost:8000/payment/cancel"
 
 ADMIN_NAME="GearUp Admin"
 ADMIN_EMAIL="admin@gearup.com"
